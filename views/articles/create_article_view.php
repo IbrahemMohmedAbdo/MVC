@@ -1,7 +1,7 @@
-<?php include('layouts/header.php'); ?>
+<?php include(__DIR__ . '/../layouts/header.php'); ?>
 
 <body>
-   
+
     <div class="container mt-5 text-center">
         <h1 class="mb-4">Create Article</h1>
         <form action="index.php?action=create" method="post" enctype="multipart/form-data">
@@ -16,11 +16,24 @@
             </div>
 
             <div class="mb-3">
+                <label for="category" class="form-label">Category:</label>
+                <select class="form-select" name="category" id="category" required>
+                    <option value="" selected>Select Category</option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?= $category['id']; ?>"><?= $category['name']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="mb-3">
                 <label for="image" class="form-label">Image:</label>
                 <input class="form-control" type="file" name="image" id="image" accept="image/*">
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+    </div>
+
 </body>
+
 </html>

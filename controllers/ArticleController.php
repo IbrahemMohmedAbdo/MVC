@@ -8,29 +8,37 @@ class ArticleController
         $this->model = $model;
     }
 
-    public function listArticles()
+    public function listArticles($categoryFilter = null)
     {
-        $articles = $this->model->getAllArticles();
-        include(__DIR__ . '/../views/list_article_view.php');
+        try {
+
+            $articles = $this->model->getArticles($categoryFilter);
+
+
+            $categories = $this->model->getCategories();
+
+
+            include(__DIR__ . '/../views/articles/list_article_view.php');
+        } catch (Exception $e) {
+
+            echo "Error: " . $e->getMessage();
+        }
     }
-
-
     public function createArticle()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $title = $_POST['title'];
                 $content = $_POST['content'];
+                $categoryId = $_POST['category'];
 
-                
-                $uploadDir = 'uploads/'; 
+                $uploadDir = 'uploads/';
                 $uploadedFile = $uploadDir . basename($_FILES['image']['name']);
 
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadedFile)) {
-                  
                     $imagePath = $uploadedFile;
 
-                    $this->model->createArticle($title, $content, $imagePath);
+                    $this->model->createArticle($title, $content, $imagePath, $categoryId);
 
                     header('Location: index.php?action=list');
                     exit;
@@ -38,11 +46,16 @@ class ArticleController
                     throw new Exception("Failed to upload image.");
                 }
             } catch (Exception $e) {
-               
                 echo "Error: " . $e->getMessage();
             }
         } else {
-            include(__DIR__ . '/../views/create_article_view.php');
+            try {
+
+                $categories = $this->model->getCategories();
+                include(__DIR__ . '/../views/articles/create_article_view.php');
+            } catch (Exception $e) {
+                echo "Error: " . $e->getMessage();
+            }
         }
     }
 
@@ -50,7 +63,7 @@ class ArticleController
     public function viewArticle($id)
     {
         $article = $this->model->getArticleById($id);
-        include(__DIR__ . '/../views/view_article_view.php');
+        include(__DIR__ . '/../views/articles/view_article_view.php');
     }
 
 
@@ -58,12 +71,12 @@ class ArticleController
 
     public function editArticle($id)
     {
-        $this->processArticleForm($id, 'edit_article_view.php');
+        $this->processArticleForm($id, 'articles/edit_article_view.php');
     }
 
     public function updateArticle($id)
     {
-        $this->processArticleForm($id, 'edit_article_view.php');
+        $this->processArticleForm($id, 'articles/edit_article_view.php');
     }
 
     private function processArticleForm($id, $view)
@@ -111,7 +124,7 @@ class ArticleController
             header('Location: index.php?action=list');
             exit;
         } catch (Exception $e) {
-            
+
             echo "Error: " . $e->getMessage();
         }
     }

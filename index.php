@@ -2,10 +2,22 @@
 include(__DIR__ . '/config/db.php');
 include(__DIR__ . '/models/ArticleModel.php');
 include(__DIR__ . '/controllers/ArticleController.php');
+include(__DIR__ . '/models/CategoryModel.php');
+include(__DIR__ . '/controllers/CategoryController.php');  
 
-$model = new ArticleModel($mysqli);
 
-$controller = new ArticleController($model);
+
+// create Articles..
+$articleModel = new ArticleModel($mysqli);
+$articleController = new ArticleController($articleModel);
+// create categories..
+$categoryModel = new CategoryModel($mysqli);  
+$categoryController = new CategoryController($categoryModel);  
+
+
+$categoryFilter = isset($_GET['category']) ? $_GET['category'] : null;
+
+
 if (isset($_GET['action'])) {
     $action = $_GET['action'];
 
@@ -13,22 +25,28 @@ if (isset($_GET['action'])) {
     switch ($action) {
 
         case 'list':
-            $controller->listArticles();
+            $articleController->listArticles();
             break;
         case 'create':
-            $controller->createArticle();
+            $articleController->createArticle();
             break;
         case 'edit':
             $id = isset($_GET['id']) ? $_GET['id'] : null;
-            $controller->editArticle($id);
+            $articleController->editArticle($id);
             break;
         case 'delete':
             $id = isset($_GET['id']) ? $_GET['id'] : null;
-            $controller->deleteArticle($id);
+            $articleController->deleteArticle($id);
             break;
         case 'view':
             $id = isset($_GET['id']) ? $_GET['id'] : null;
-            $controller->viewArticle($id);
+            $articleController->viewArticle($id);
+            break;
+            case 'listCategories':
+            $categoryController->listCategories();
+                break;
+        case 'createCategory':
+            $categoryController->createCategory();
             break;
         default:
             echo "Method not implemented";

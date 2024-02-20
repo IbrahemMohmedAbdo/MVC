@@ -1,5 +1,5 @@
-<?php include('layouts/header.php'); ?>
-
+<?php include(__DIR__ . '/../layouts/header.php');
+?>
 <body>
     <div class="container mt-5">
     <h1> View Article </h1>
